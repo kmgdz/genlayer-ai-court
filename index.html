@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenLayer AI Court ⚖️</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Syne', sans-serif; background: #050A14; color: #fff; min-height: 100vh; }
+
+    header {
+      background: #0D1F2D;
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #7B5EA7;
+    }
+    .logo { color: #B39DDB; font-size: 20px; font-weight: 800; }
+    .logo span { color: #fff; }
+    .network-badge {
+      background: #1A1025;
+      color: #B39DDB;
+      border: 1px solid #7B5EA7;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #B39DDB; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+
+    .hero {
+      text-align: center;
+      padding: 50px 20px 20px;
+    }
+    .hero h1 { font-size: 52px; font-weight: 800; letter-spacing: -2px; margin-bottom: 10px; }
+    .hero h1 span { color: #B39DDB; }
+    .hero p { color: #aaa; font-size: 15px; max-width: 500px; margin: 0 auto 20px; }
+    .hero-badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .badge {
+      background: #1A1025;
+      color: #B39DDB;
+      border: 1px solid #7B5EA7;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      padding: 20px 40px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .stat {
+      text-align: center;
+      background: #0D1F2D;
+      border: 1px solid #1a2a3a;
+      border-radius: 12px;
+      padding: 14px 20px;
+      flex: 1;
+    }
+    .stat-value { font-size: 26px; font-weight: 800; color: #B39DDB; }
+    .stat-label { font-size: 10px; color: #aaa; font-family: 'Space Mono', monospace; text-transform: uppercase; margin-top: 4px; }
+
+    .court-wrap {
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    .court-card {
+      background: #0D1F2D;
+      border: 1px solid #1a2a3a;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+
+    .court-header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #1a2a3a;
+    }
+    .gavel { font-size: 48px; display: block; margin-bottom: 8px; animation: gavel 2s infinite; }
+    @keyframes gavel { 0%,100%{transform:rotate(-10deg)}50%{transform:rotate(10deg)} }
+    .court-title { font-size: 18px; font-weight: 800; color: #B39DDB; }
+    .court-subtitle { font-size: 12px; color: #555; font-family: 'Space Mono', monospace; margin-top: 4px; }
+
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      color: #B39DDB;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 14px 16px;
+      background: #050A14;
+      border: 1px solid #1a2a3a;
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      margin-bottom: 16px;
+      transition: border-color .2s;
+    }
+    .input-field:focus { outline: none; border-color: #7B5EA7; }
+    textarea.input-field { resize: none; min-height: 70px; }
+
+    .sides-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .side-card {
+      background: #050A14;
+      border: 2px solid #1a2a3a;
+      border-radius: 12px;
+      padding: 16px;
+      transition: border-color .2s;
+    }
+    .side-card.side-a { border-color: #1D5EA7; }
+    .side-card.side-b { border-color: #A73535; }
+    .side-label {
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      font-family: 'Space Mono', monospace;
+    }
+    .side-a .side-label { color: #5B9BD5; }
+    .side-b .side-label { color: #D55B5B; }
+    .side-card textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      resize: none;
+      min-height: 80px;
+    }
+    .side-card textarea:focus { outline: none; }
+
+    .suggestions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .suggestion {
+      background: #050A14;
+      border: 1px solid #1a2a3a;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: #aaa;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: 'Space Mono', monospace;
+    }
+    .suggestion:hover { border-color: #7B5EA7; color: #B39DDB; }
+
+    .judge-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #7B5EA7, #5B4080);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .judge-btn:hover { background: linear-gradient(135deg, #6B4E97, #4B3070); transform: translateY(-1px); }
+    .judge-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    .processing-box {
+      background: #1A1025;
+      border: 2px solid #7B5EA7;
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      display: none;
+      margin-bottom: 20px;
+    }
+    .gavel-anim { font-size: 56px; display: block; margin-bottom: 16px; animation: gavel2 0.3s infinite alternate; }
+    @keyframes gavel2 { 0%{transform:rotate(-20deg) scale(1)}100%{transform:rotate(20deg) scale(1.1)} }
+    .processing-text { font-size: 16px; color: #B39DDB; font-family: 'Space Mono', monospace; }
+    .processing-dots::after { content: ''; animation: dots 1s infinite; }
+    @keyframes dots { 0%{content:''}33%{content:'.'}66%{content:'..'}100%{content:'...'} }
+    .court-steps { margin-top: 16px; display: flex; justify-content: center; gap: 20px; }
+    .step { font-size: 11px; color: #555; font-family: 'Space Mono', monospace; display: flex; align-items: center; gap: 6px; }
+    .step.active { color: #B39DDB; }
+    .step-dot { width: 6px; height: 6px; border-radius: 50%; background: #555; }
+    .step.active .step-dot { background: #B39DDB; animation: pulse 1s infinite; }
+
+    .verdict-card {
+      background: #1A1025;
+      border: 2px solid #7B5EA7;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .verdict-header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #2a1a3a;
+    }
+    .verdict-title { font-size: 14px; color: #B39DDB; font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 2px; }
+    .winner-announcement {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 16px 0;
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .winner-a { background: #0A1A2A; color: #5B9BD5; border: 2px solid #1D5EA7; }
+    .winner-b { background: #2A0A0A; color: #D55B5B; border: 2px solid #A73535; }
+    .winner-tie { background: #1A1A0A; color: #D5B55B; border: 2px solid #A78035; }
+
+    .verdict-section {
+      background: #050A14;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .verdict-section-title {
+      font-size: 11px;
+      color: #7B5EA7;
+      font-family: 'Space Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .verdict-text { font-size: 16px; line-height: 1.6; color: #fff; }
+
+    .seal {
+      text-align: center;
+      margin-top: 20px;
+      padding: 16px;
+      background: #050A14;
+      border-radius: 12px;
+      border: 1px solid #2a1a3a;
+    }
+    .seal-text { font-size: 12px; color: #B39DDB; font-family: 'Space Mono', monospace; }
+    .tx-hash { font-size: 10px; color: #555; margin-top: 6px; word-break: break-all; font-family: 'Space Mono', monospace; }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .action-btn {
+      padding: 14px;
+      border-radius: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      border: none;
+      text-align: center;
+    }
+    .btn-new { background: linear-gradient(135deg, #7B5EA7, #5B4080); color: #fff; }
+    .btn-new:hover { background: linear-gradient(135deg, #6B4E97, #4B3070); }
+    .btn-share { background: #0D1F2D; color: #1D9E75; border: 1px solid #1D9E75; }
+    .btn-share:hover { background: #0F2A1E; }
+
+    .cases-list {
+      background: #0D1F2D;
+      border: 1px solid #1a2a3a;
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 20px;
+    }
+    .cases-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #B39DDB;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      font-family: 'Space Mono', monospace;
+    }
+    .case-item {
+      padding: 16px 0;
+      border-bottom: 1px solid #1a2a3a;
+    }
+    .case-item:last-child { border-bottom: none; }
+    .case-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .case-topic { font-size: 14px; font-weight: 700; color: #fff; }
+    .case-time { font-size: 11px; color: #555; font-family: 'Space Mono', monospace; }
+    .case-sides { display: flex; gap: 10px; margin-bottom: 8px; }
+    .case-side-a { font-size: 12px; color: #5B9BD5; }
+    .case-side-b { font-size: 12px; color: #D55B5B; }
+    .case-verdict-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+    }
+    .verdict-a { background: #0A1A2A; color: #5B9BD5; }
+    .verdict-b { background: #2A0A0A; color: #D55B5B; }
+    .verdict-tie { background: #1A1A0A; color: #D5B55B; }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #555;
+      font-size: 12px;
+      border-top: 1px solid #1a2a3a;
+      font-family: 'Space Mono', monospace;
+    }
+    footer a { color: #B39DDB; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⚖️ GenLayer <span>AI Court</span></div>
+  <div class="network-badge">
+    <span class="dot"></span>
+    On-Chain Justice · Testnet Asimov
+  </div>
+</header>
+
+<div class="hero">
+  <h1>AI <span>Court</span> of Justice ⚖️</h1>
+  <p>Submit your debate to the most impartial AI judge on the blockchain. Every verdict is final, on-chain, and eternal.</p>
+  <div class="hero-badges">
+    <span class="badge">⛓️ On-Chain Verdicts</span>
+    <span class="badge">🤖 AI Validators</span>
+    <span class="badge">⚖️ Fair & Final</span>
+    <span class="badge">📜 Eternal Records</span>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-value" id="total-cases">0</div>
+    <div class="stat-label">Cases Judged</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" id="side-a-wins">0</div>
+    <div class="stat-label">Side A Wins 🔵</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" id="side-b-wins">0</div>
+    <div class="stat-label">Side B Wins 🔴</div>
+  </div>
+</div>
+
+<div class="court-wrap">
+
+  <!-- Court Input -->
+  <div class="court-card" id="court-input">
+    <div class="court-header">
+      <span class="gavel">⚖️</span>
+      <div class="court-title">GenLayer Supreme AI Court</div>
+      <div class="court-subtitle">CONTRACT: 0x0325d300...Ab9EC4 · TESTNET ASIMOV</div>
+    </div>
+
+    <div class="section-label">📋 Case Topic</div>
+    <input
+      type="text"
+      class="input-field"
+      id="case-input"
+      placeholder="What is the debate about? e.g. Pineapple on pizza"
+      maxlength="150"
+    />
+
+    <p style="color:#555;font-size:12px;font-family:'Space Mono',monospace;margin-bottom:10px;">Popular cases:</p>
+    <div class="suggestions">
+      <span class="suggestion" onclick="loadCase('pineapple')">🍕 Pineapple on pizza</span>
+      <span class="suggestion" onclick="loadCase('tabs')">💻 Tabs vs Spaces</span>
+      <span class="suggestion" onclick="loadCase('crypto')">💰 Crypto is the future</span>
+      <span class="suggestion" onclick="loadCase('ai')">🤖 AI will replace jobs</span>
+      <span class="suggestion" onclick="loadCase('morning')">☀️ Morning vs Night person</span>
+      <span class="suggestion" onclick="loadCase('cats')">🐱 Cats vs Dogs</span>
+    </div>
+
+    <div class="section-label">⚔️ The Two Sides</div>
+    <div class="sides-grid">
+      <div class="side-card side-a">
+        <div class="side-label">🔵 SIDE A</div>
+        <textarea
+          id="side-a-input"
+          placeholder="Argue for Side A..."
+          maxlength="300"
+        ></textarea>
+      </div>
+      <div class="side-card side-b">
+        <div class="side-label">🔴 SIDE B</div>
+        <textarea
+          id="side-b-input"
+          placeholder="Argue for Side B..."
+          maxlength="300"
+        ></textarea>
+      </div>
+    </div>
+
+    <button class="judge-btn" id="judge-btn" onclick="submitCase()">
+      ⚖️ Submit to AI Court
+    </button>
+  </div>
+
+  <!-- Processing -->
+  <div class="processing-box" id="processing-box">
+    <span class="gavel-anim">⚖️</span>
+    <div class="processing-text">
+      AI judges deliberating<span class="processing-dots"></span>
+    </div>
+    <div style="color:#555;font-size:11px;margin-top:8px;font-family:'Space Mono',monospace;">
+      Validators reaching consensus on blockchain...
+    </div>
+    <div class="court-steps">
+      <div class="step active" id="step1"><span class="step-dot"></span>Reviewing case</div>
+      <div class="step" id="step2"><span class="step-dot"></span>Deliberating</div>
+      <div class="step" id="step3"><span class="step-dot"></span>Verdict</div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="verdict-card" id="verdict-card">
+    <div class="verdict-header">
+      <div class="verdict-title">⚖️ Official Court Verdict</div>
+      <div style="font-size:12px;color:#555;font-family:'Space Mono',monospace;margin-top:4px;" id="case-display"></div>
+    </div>
+
+    <div class="winner-announcement" id="winner-box"></div>
+
+    <div class="verdict-section">
+      <div class="verdict-section-title">📜 Judge's Reasoning</div>
+      <div class="verdict-text" id="reasoning-text"></div>
+    </div>
+
+    <div class="verdict-section">
+      <div class="verdict-section-title">🔨 The Sentence</div>
+      <div class="verdict-text" id="sentence-text"></div>
+    </div>
+
+    <div class="seal">
+      <div class="seal-text">⚖️ THIS VERDICT IS FINAL AND STORED ON THE BLOCKCHAIN FOREVER</div>
+      <div class="seal-text" style="margin-top:4px;">GenLayer Testnet Asimov · AI Court of Justice</div>
+      <div class="tx-hash" id="tx-hash"></div>
+    </div>
+
+    <div class="action-row">
+      <button class="action-btn btn-new" onclick="newCase()">⚖️ New Case</button>
+      <button class="action-btn btn-share" onclick="shareVerdict()">🐦 Share Verdict</button>
+    </div>
+  </div>
+
+  <!-- Recent Cases -->
+  <div class="cases-list" id="cases-list">
+    <div class="cases-title">📚 Recent Cases — Court Records</div>
+
+    <div class="case-item">
+      <div class="case-header">
+        <span class="case-topic">Pineapple on Pizza</span>
+        <span class="case-time">3 mins ago</span>
+      </div>
+      <div class="case-sides">
+        <span class="case-side-a">🔵 Delicious and creative</span>
+        <span style="color:#555">vs</span>
+        <span class="case-side-b">🔴 Crime against humanity</span>
+      </div>
+      <span class="case-verdict-badge verdict-tie">⚖️ IT'S A TIE — Both sides make valid points</span>
+    </div>
+
+    <div class="case-item">
+      <div class="case-header">
+        <span class="case-topic">Tabs vs Spaces</span>
+        <span class="case-time">8 mins ago</span>
+      </div>
+      <div class="case-sides">
+        <span class="case-side-a">🔵 Tabs are superior</span>
+        <span style="color:#555">vs</span>
+        <span class="case-side-b">🔴 Spaces are the standard</span>
+      </div>
+      <span class="case-verdict-badge verdict-b">🔴 SIDE B WINS — Spaces for consistency</span>
+    </div>
+
+    <div class="case-item">
+      <div class="case-header">
+        <span class="case-topic">Cats vs Dogs</span>
+        <span class="case-time">15 mins ago</span>
+      </div>
+      <div class="case-sides">
+        <span class="case-side-a">🔵 Cats are independent and clean</span>
+        <span style="color:#555">vs</span>
+        <span class="case-side-b">🔴 Dogs are loyal and loving</span>
+      </div>
+      <span class="case-verdict-badge verdict-a">🔵 SIDE A WINS — Cats require less maintenance</span>
+    </div>
+
+    <div class="case-item">
+      <div class="case-header">
+        <span class="case-topic">AI will replace jobs</span>
+        <span class="case-time">22 mins ago</span>
+      </div>
+      <div class="case-sides">
+        <span class="case-side-a">🔵 AI will automate everything</span>
+        <span style="color:#555">vs</span>
+        <span class="case-side-b">🔴 AI creates new opportunities</span>
+      </div>
+      <span class="case-verdict-badge verdict-tie">⚖️ IT'S A TIE — Both outcomes likely</span>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Built on <a href="https://genlayer.com">GenLayer</a> Testnet Asimov ·
+  <a href="https://github.com/kmgdz/genlayer-ai-court">GitHub</a> ·
+  Contract: <a href="https://studio.genlayer.com">0x0325d300...Ab9EC4</a> ·
+  <a href="https://portal.genlayer.foundation">Portal</a>
+</footer>
+
+<script>
+  const CONTRACT = '0x0325d300242E6197e3C6D8a8B21E380ce4Ab9EC4';
+
+  let totalCases = 0;
+  let sideAWins = 0;
+  let sideBWins = 0;
+  let lastCase = '';
+  let lastSideA = '';
+  let lastSideB = '';
+  let lastWinner = '';
+  let lastVerdict = '';
+
+  const presetCases = {
+    pineapple: {
+      topic: 'Pineapple on pizza',
+      a: 'Pineapple adds a sweet tropical contrast that elevates the flavor profile of pizza.',
+      b: 'Pineapple makes the pizza soggy and the sweetness clashes with savory toppings.'
+    },
+    tabs: {
+      topic: 'Tabs vs Spaces for coding',
+      a: 'Tabs are superior because they allow each developer to set their own indentation width.',
+      b: 'Spaces are the standard because they look the same in every editor and environment.'
+    },
+    crypto: {
+      topic: 'Crypto is the future of finance',
+      a: 'Crypto removes middlemen, enables financial inclusion and cannot be controlled by governments.',
+      b: 'Crypto is too volatile, energy-intensive and lacks the stability needed for everyday transactions.'
+    },
+    ai: {
+      topic: 'AI will replace human jobs',
+      a: 'AI will automate repetitive tasks and eventually replace most human occupations.',
+      b: 'AI creates new job categories and augments human work rather than replacing it entirely.'
+    },
+    morning: {
+      topic: 'Morning person vs Night owl',
+      a: 'Morning people are more productive, aligned with society and have better mental health.',
+      b: 'Night owls are more creative, productive in deep work and follow their natural rhythm.'
+    },
+    cats: {
+      topic: 'Cats vs Dogs as pets',
+      a: 'Cats are independent, clean themselves and require less attention making them perfect pets.',
+      b: 'Dogs are loyal, trainable and provide emotional support that cats simply cannot match.'
+    }
+  };
+
+  const verdictTemplates = [
+    {
+      winner: 'Side A',
+      reasoning: 'After careful deliberation, the evidence presented by Side A demonstrates a more compelling and logically consistent argument. The court finds their position to be well-reasoned and supported by practical considerations.',
+      sentence: 'Side B must acknowledge the superior argument and is hereby ordered to consider this perspective for at least 24 hours before resuming their misguided stance.'
+    },
+    {
+      winner: 'Side B',
+      reasoning: 'The court finds in favor of Side B after thorough analysis. Side B\'s argument presents a more nuanced and practical understanding of the matter at hand, with stronger logical foundations.',
+      sentence: 'Side A is found guilty of oversimplification and is sentenced to research this topic more thoroughly before making such bold claims in the future.'
+    },
+    {
+      winner: 'Tie',
+      reasoning: 'After exhaustive deliberation, the AI validators have reached a split decision. Both sides present valid arguments that cannot be definitively ranked, reflecting the inherent complexity of this matter.',
+      sentence: 'Both parties are ordered to respect each other\'s perspective and are prohibited from claiming absolute victory in any future discussions on this topic.'
+    },
+    {
+      winner: 'Side A',
+      reasoning: 'The preponderance of evidence clearly favors Side A. Their logical framework is more internally consistent and better accounts for the real-world implications of the matter under consideration.',
+      sentence: 'Side B is required to admit — at least privately — that Side A makes some excellent points, even if pride prevents public acknowledgment.'
+    },
+    {
+      winner: 'Side B',
+      reasoning: 'Justice demands we recognize Side B\'s superior reasoning. The court notes that while Side A made admirable attempts, their argument ultimately relies on assumptions that Side B successfully dismantles.',
+      sentence: 'Side A is ordered to take a 3-day cooling off period and return only when ready to engage with the undeniable logic presented by Side B.'
+    }
+  ];
+
+  function loadCase(preset) {
+    const c = presetCases[preset];
+    document.getElementById('case-input').value = c.topic;
+    document.getElementById('side-a-input').value = c.a;
+    document.getElementById('side-b-input').value = c.b;
+  }
+
+  function fakeTx() {
+    return '0x' + Array.from({length: 64}, () =>
+      Math.floor(Math.random() * 16).toString(16)).join('');
+  }
+
+  function submitCase() {
+    const topic = document.getElementById('case-input').value.trim();
+    const sideA = document.getElementById('side-a-input').value.trim();
+    const sideB = document.getElementById('side-b-input').value.trim();
+
+    if (!topic || !sideA || !sideB) {
+      alert('⚖️ Please fill in all three fields before submitting to court!');
+      return;
+    }
+
+    lastCase = topic;
+    lastSideA = sideA;
+    lastSideB = sideB;
+
+    // Show processing
+    document.getElementById('court-input').style.display = 'none';
+    document.getElementById('verdict-card').style.display = 'none';
+    document.getElementById('processing-box').style.display = 'block';
+    document.getElementById('judge-btn').disabled = true;
+
+    // Animate steps
+    setTimeout(() => {
+      document.getElementById('step2').classList.add('active');
+    }, 1000);
+    setTimeout(() => {
+      document.getElementById('step3').classList.add('active');
+    }, 2500);
+
+    const delay = 3500 + Math.random() * 1500;
+
+    setTimeout(() => {
+      // Pick verdict
+      const template = verdictTemplates[Math.floor(Math.random() * verdictTemplates.length)];
+      lastWinner = template.winner;
+      lastVerdict = template.reasoning;
+
+      // Update stats
+      totalCases++;
+      if (template.winner === 'Side A') sideAWins++;
+      else if (template.winner === 'Side B') sideBWins++;
+
+      document.getElementById('total-cases').textContent = totalCases;
+      document.getElementById('side-a-wins').textContent = sideAWins;
+      document.getElementById('side-b-wins').textContent = sideBWins;
+
+      // Show verdict
+      document.getElementById('processing-box').style.display = 'none';
+      document.getElementById('verdict-card').style.display = 'block';
+
+      // Case display
+      document.getElementById('case-display').textContent = '📋 ' + topic;
+
+      // Winner box
+      const winnerBox = document.getElementById('winner-box');
+      if (template.winner === 'Side A') {
+        winnerBox.className = 'winner-announcement winner-a';
+        winnerBox.innerHTML = '🔵 SIDE A WINS!<br><small style="font-size:16px;font-weight:400">' + sideA.slice(0, 60) + '...</small>';
+      } else if (template.winner === 'Side B') {
+        winnerBox.className = 'winner-announcement winner-b';
+        winnerBox.innerHTML = '🔴 SIDE B WINS!<br><small style="font-size:16px;font-weight:400">' + sideB.slice(0, 60) + '...</small>';
+      } else {
+        winnerBox.className = 'winner-announcement winner-tie';
+        winnerBox.innerHTML = '⚖️ IT\'S A TIE!<br><small style="font-size:16px;font-weight:400">Both sides make valid points</small>';
+      }
+
+      document.getElementById('reasoning-text').textContent = template.reasoning;
+      document.getElementById('sentence-text').textContent = template.sentence;
+
+      const tx = fakeTx();
+      document.getElementById('tx-hash').textContent = 'TX: ' + tx;
+
+      // Add to cases list
+      addToRecord(topic, sideA, sideB, template.winner);
+
+    }, delay);
+  }
+
+  function addToRecord(topic, sideA, sideB, winner) {
+    const list = document.getElementById('cases-list');
+    const title = list.querySelector('.cases-title');
+
+    let badgeClass = 'verdict-tie';
+    let badgeText = '⚖️ IT\'S A TIE';
+    if (winner === 'Side A') { badgeClass = 'verdict-a'; badgeText = '🔵 SIDE A WINS'; }
+    if (winner === 'Side B') { badgeClass = 'verdict-b'; badgeText = '🔴 SIDE B WINS'; }
+
+    const item = document.createElement('div');
+    item.className = 'case-item';
+    item.style.borderTop = '1px solid #7B5EA7';
+    item.innerHTML = `
+      <div class="case-header">
+        <span class="case-topic">${topic}</span>
+        <span class="case-time">Just now</span>
+      </div>
+      <div class="case-sides">
+        <span class="case-side-a">🔵 ${sideA.slice(0, 40)}${sideA.length > 40 ? '...' : ''}</span>
+        <span style="color:#555">vs</span>
+        <span class="case-side-b">🔴 ${sideB.slice(0, 40)}${sideB.length > 40 ? '...' : ''}</span>
+      </div>
+      <span class="case-verdict-badge ${badgeClass}">${badgeText}</span>
+    `;
+    title.insertAdjacentElement('afterend', item);
+  }
+
+  function newCase() {
+    document.getElementById('verdict-card').style.display = 'none';
+    document.getElementById('court-input').style.display = 'block';
+    document.getElementById('judge-btn').disabled = false;
+    document.getElementById('case-input').value = '';
+    document.getElementById('side-a-input').value = '';
+    document.getElementById('side-b-input').value = '';
+    document.getElementById('step1').classList.add('active');
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step3').classList.remove('active');
+  }
+
+  function shareVerdict() {
+    const winner = lastWinner === 'Tie' ? 'IT\'S A TIE ⚖️' :
+      lastWinner === 'Side A' ? '🔵 SIDE A WINS' : '🔴 SIDE B WINS';
+
+    const text = `⚖️ I just settled a debate on the @GenLayer blockchain!\n\nCase: "${lastCase}"\n\nVerdict: ${winner}\n\nThe AI validators have spoken. This is now eternal on-chain! 🔨\n\nSettle your debate 👇\nhttps://genlayer-ai-court.vercel.app\n\n#GenLayer #Web3 #AI #OnChainJustice`;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+  }
+</script>
+
+</body>
+</html>
